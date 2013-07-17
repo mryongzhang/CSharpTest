@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>test</title>
+    <script src="~/Script/jquery/jquery-1.9.1.js"></script>
+    <script src="~/Script/jquery/jquery.form.js"></script>
+    <script src="~/Script/jeasyui/jquery.easyui.min.js"></script>
+    <script src="~/Script/jeasyui/locale/easyui-lang-zh_CN.js"></script>
+    <script>
+        function submit(data)
+        {
+            var myForm = document.createElement('form');
+            myForm.id = 'submitForm';
+            myForm.method = 'post';
+            myForm.action = 'main/submit';
+            for (var k in data) {
+                var myInput = document.createElement('input');
+                myInput.setAttribute("name", k);
+                myInput.setAttribute("value", data[k]);
+                myForm.appendChild(myInput);
+            }
+            document.body.appendChild(myForm);
+            myForm.submit();
+            $("#submitForm").submit(function () {
+                var options = {
+                    target: '#Tip',
+                    url: 'main/submit',
+                    type: 'post',
+                    success: function () { alert($('#Tip').text()); }
+                };
+                $("#submitForm").ajaxSubmit(options);
+                return false;
+            });
+        }
+    </script>
+
+</head>
+<body>
+    <div>
+        @Html.Action("Partial", "Partial")
+    </div>
+    <div>
+        <button id="submitBtn" onclick="submit({'dep':'depname'})">提交</button>
+    </div>
+</body>
+</html>
