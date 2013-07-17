@@ -158,6 +158,7 @@
     <Content Include="Script\jeasyui\plugins\jquery.validatebox.js" />
     <Content Include="Script\jeasyui\plugins\jquery.window.js" />
     <Content Include="Script\jquery\jquery-1.9.1.js" />
+    <Content Include="Script\jquery\jquery.form.js" />
     <Content Include="Script\self\submitInfo.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -199,7 +200,7 @@
         <WebProjectProperties>
           <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>12701</DevelopmentServerPort>
+          <DevelopmentServerPort>15223</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost:52857/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>

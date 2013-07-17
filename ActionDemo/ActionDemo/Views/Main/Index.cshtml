@@ -7,30 +7,28 @@
     <script src="~/Script/jeasyui/jquery.easyui.min.js"></script>
     <script src="~/Script/jeasyui/locale/easyui-lang-zh_CN.js"></script>
     <script>
-        function submit(data)
+        function submit()
         {
             var myForm = document.createElement('form');
             myForm.id = 'submitForm';
-            myForm.method = 'post';
-            myForm.action = 'main/submit';
-            for (var k in data) {
-                var myInput = document.createElement('input');
-                myInput.setAttribute("name", k);
-                myInput.setAttribute("value", data[k]);
-                myForm.appendChild(myInput);
-            }
+            myForm.style = "visibility:hidden;"
             document.body.appendChild(myForm);
-            myForm.submit();
-            $("#submitForm").submit(function () {
-                var options = {
-                    target: '#Tip',
-                    url: 'main/submit',
-                    type: 'post',
-                    success: function () { alert($('#Tip').text()); }
-                };
-                $("#submitForm").ajaxSubmit(options);
-                return false;
+            $("#submitForm").form('submit', {
+                url: 'main/submit', method: 'post',
+                onSubmit: function (param)
+                {
+                    param.dep = $("#dep").val();
+                },
+                success: function (data) {
+                    if (data = $("#dep").val()) {
+                        alert("submit value:" + data + " success! ");
+                    }
+                    else {
+                        alert("submit value:" + data + " failed! ");
+                    }
+                }
             });
+            document.body.removeChild(myForm);
         }
     </script>
 
@@ -40,7 +38,7 @@
         @Html.Action("Partial", "Partial")
     </div>
     <div>
-        <button id="submitBtn" onclick="submit({'dep':'depname'})">提交</button>
+        <button id="submitBtn" onclick="submit()">提交</button>
     </div>
 </body>
 </html>

@@ -16,10 +16,10 @@ namespace ActionDemo.Controllers
             return View();
         }
 
-        public ActionResult submit()
+        public string submit()
         {
             string dep = Request["dep"];
-            return View();
+            return dep;
         }
     }
 }
