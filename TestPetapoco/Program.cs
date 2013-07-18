@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DefaultConnection;
+using PetaPoco;
 
 //////////////////////////////////////////////////////////////////////////
 // 测试Petapoco，连接AdventureWorks库
@@ -15,7 +16,8 @@ namespace TestPetapoco
     {
         static void Main(string[] args)
         {
-
+            
+            // 用自动生成的poco对象访问
             using (var db = new DefaultConnectionDB())
             {
                 IEnumerable<Address> adds = db.Query<Address>("select top 1000 * from Person.Address");
@@ -31,6 +33,7 @@ namespace TestPetapoco
                 db.Dispose();
             }
 
+            // dynamic方式方位
             using (var db = new DefaultConnectionDB())
             {
                 IEnumerable<dynamic> adds = db.Query<dynamic>("select top 1000 * from Person.Address");
@@ -39,6 +42,18 @@ namespace TestPetapoco
                     Console.WriteLine(a.City);
                 }
                 db.Dispose();                
+            }
+            
+            // 不用生成的数据库连接对象进行访问
+            using (var db = new Database("DefaultConnection"))
+            {
+                IEnumerable<dynamic> adds = db.Query<dynamic>("select top 1000 * from Person.Address");
+                foreach (var a in adds)
+                {
+                    Console.WriteLine(a.City);
+                }
+                db.Dispose();                
+
             }
 
             Console.ReadKey();
