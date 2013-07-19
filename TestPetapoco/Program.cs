@@ -33,7 +33,7 @@ namespace TestPetapoco
                 db.Dispose();
             }
 
-            // dynamic方式方位
+            // dynamic方式访问
             using (var db = new DefaultConnectionDB())
             {
                 IEnumerable<dynamic> adds = db.Query<dynamic>("select top 1000 * from Person.Address");
