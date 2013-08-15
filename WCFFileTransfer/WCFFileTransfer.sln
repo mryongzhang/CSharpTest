@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WCFFileTransfer", "WCFFileTransfer\WCFFileTransfer.csproj", "{B39F715C-D20A-4F68-A14F-1756E552564D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WCFFileServer", "WCFFileServer\WCFFileServer.csproj", "{53B2870B-90D5-4247-9E68-355D3844690B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileInterface", "FileInterface\FileInterface.csproj", "{4871A681-33BF-40F7-B00C-041BC019BE33}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B39F715C-D20A-4F68-A14F-1756E552564D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B39F715C-D20A-4F68-A14F-1756E552564D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B39F715C-D20A-4F68-A14F-1756E552564D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B39F715C-D20A-4F68-A14F-1756E552564D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53B2870B-90D5-4247-9E68-355D3844690B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53B2870B-90D5-4247-9E68-355D3844690B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53B2870B-90D5-4247-9E68-355D3844690B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53B2870B-90D5-4247-9E68-355D3844690B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4871A681-33BF-40F7-B00C-041BC019BE33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4871A681-33BF-40F7-B00C-041BC019BE33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4871A681-33BF-40F7-B00C-041BC019BE33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4871A681-33BF-40F7-B00C-041BC019BE33}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
