@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -87,18 +88,29 @@ namespace UpDownFile2
                         ref openAndRepair, ref documentDirection, ref noEncodingDialog
                         );
 
-                // 设定修订者的名称
-                m_word.UserName = "zyzy";
                 // 启用修改履历
                 doc.TrackRevisions = true;
+                doc.ShowRevisions = false;
+
+                // 设定word的显示模式是阅读模式
+                // doc.ActiveWindow.View.Type = MSWord.WdViewType.wdReadingView;
+
                 m_word.Visible = true;
+
+
+                // 隐藏工具栏
+                //doc.ActiveWindow.ToggleRibbon();
+
+                // 设定修订者的名称
+                //m_word.ActiveDocument.Application.UserName = "张勇";
+                m_word.UserName = "张勇";
 
                 // 设置文档保护，只允许读
                 //doc.Protect(MSWord.WdProtectionType.wdAllowOnlyReading);
 
                 //捕获文档关闭的事件，关键！
                 m_word.DocumentBeforeClose += new MSWord.ApplicationEvents4_DocumentBeforeCloseEventHandler(wordApp_DocumentBeforeClose);
-                m_word = null;
+                m_word = null;                
 
 
                 //MessageBox.Show(m_word.Documents.Count.ToString());  
@@ -120,8 +132,11 @@ namespace UpDownFile2
             //当关闭程序打开的word文档的时候
             if (string.Compare(Doc.FullName, LocalFile, true) == 0)
             {
-                MessageBox.Show("save");
+                // 保存文档
                 Doc.Save();
+                // 关闭word
+                Doc.Application.Quit();
+                
             }
             //Doc.Application.Quit();
         }
