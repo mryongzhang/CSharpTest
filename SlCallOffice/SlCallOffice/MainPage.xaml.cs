@@ -11,6 +11,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using System.Windows.Interop;
 using System.Runtime.InteropServices.Automation;
+//using Microsoft.Office.Interop.Word;
 
 namespace SlCallOffice
 {
@@ -25,11 +26,21 @@ namespace SlCallOffice
         {
             dynamic word = AutomationFactory.CreateObject("Word.Application");
             word.Visible = true;
-            
+            string url = @"http://172.28.92.208:82/webdav/2.doc";
+
+            word.Documents.Open(url);
+            word.ActiveDocument.TrackRevisions = true;
+            word.ActiveDocument.ShowRevisions = false;
+
+            word.ActiveDocument.Application.UserName = "张勇";
+            /*
             dynamic doc = word.Documents.Add();
             string insertText = "Hello Word from Silverlight 4!";
             dynamic range = doc.Range(0, 0);
             range.Text = insertText;
+            word.Quit();
+             * */
+            //word.Quit(WdSaveOptions.wdPromptToSaveChanges, WdOriginalFormat.wdPromptUser, True);
         }
 
         private void Button2_Click(object sender, RoutedEventArgs e)

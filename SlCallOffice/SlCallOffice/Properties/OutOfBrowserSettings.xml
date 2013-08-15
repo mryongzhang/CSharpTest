@@ -1,4 +1,4 @@
-<OutOfBrowserSettings ShortName="SlCallOffice 应用程序" EnableGPUAcceleration="False" ShowInstallMenuItem="True">
+<OutOfBrowserSettings ShortName="SlCallOffice 应用程序" EnableGPUAcceleration="False" ShowInstallMenuItem="False">
   <OutOfBrowserSettings.Blurb>您的桌面上的 SlCallOffice 应用程序；在家、工作或旅途中均可使用。</OutOfBrowserSettings.Blurb>
   <OutOfBrowserSettings.WindowSettings>
     <WindowSettings Title="SlCallOffice 应用程序" />
