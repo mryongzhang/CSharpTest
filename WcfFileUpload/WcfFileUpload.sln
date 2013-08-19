@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WcfFileUpload", "WcfFileUpload\WcfFileUpload.csproj", "{0D5C8872-6F9A-4667-9367-40B7EA85D06A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UploadClient", "UploadClient\UploadClient.csproj", "{5B7057D0-33A8-486D-8E73-5E7456A0AAB5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0D5C8872-6F9A-4667-9367-40B7EA85D06A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D5C8872-6F9A-4667-9367-40B7EA85D06A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D5C8872-6F9A-4667-9367-40B7EA85D06A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D5C8872-6F9A-4667-9367-40B7EA85D06A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B7057D0-33A8-486D-8E73-5E7456A0AAB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B7057D0-33A8-486D-8E73-5E7456A0AAB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B7057D0-33A8-486D-8E73-5E7456A0AAB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B7057D0-33A8-486D-8E73-5E7456A0AAB5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
