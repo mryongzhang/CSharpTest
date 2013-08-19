@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MSWord = Microsoft.Office.Interop.Word;
+using System.Threading;
 
 namespace UpDownFile2
 {
@@ -16,8 +17,7 @@ namespace UpDownFile2
         public string Dir { get; set; }
         public string LocalFile { get; set; }
         public string FileName { get; set; }
-
-
+        
         /// <summary>
         /// 下载服务器文件至客户端
 
@@ -94,7 +94,6 @@ namespace UpDownFile2
 
                 // 设定word的显示模式是阅读模式
                 // doc.ActiveWindow.View.Type = MSWord.WdViewType.wdReadingView;
-
                 m_word.Visible = true;
 
 
@@ -110,8 +109,7 @@ namespace UpDownFile2
 
                 //捕获文档关闭的事件，关键！
                 m_word.DocumentBeforeClose += new MSWord.ApplicationEvents4_DocumentBeforeCloseEventHandler(wordApp_DocumentBeforeClose);
-                m_word = null;                
-
+                //m_word = null;
 
                 //MessageBox.Show(m_word.Documents.Count.ToString());  
                 //MessageBox.Show(m_word.Documents[1].FullName.ToString());  
@@ -136,10 +134,33 @@ namespace UpDownFile2
                 Doc.Save();
                 // 关闭word
                 Doc.Application.Quit();
+
+                // 异步方式启动上传文件函数
+                AsyncDelegate dlgt = new AsyncDelegate(Upload);
+                IAsyncResult ar = dlgt.BeginInvoke(LocalFile, new AsyncCallback(CallbackMethod), dlgt);
                 
             }
             //Doc.Application.Quit();
         }
+
+        // 用于上传文件的操作
+        public void Upload(string filename)
+        {
+            Thread.Sleep(200);
+            FileStream fs = File.Open(filename, FileMode.Open);
+            fs.Close();
+            
+        }
+
+        // 上传函数执行完成后的回调函数
+        public void CallbackMethod(IAsyncResult ar)
+        {
+            AsyncDelegate dlgt = (AsyncDelegate)ar.AsyncState;
+            dlgt.EndInvoke(ar);
+            MessageBox.Show("done");
+        }
+
+        public delegate void AsyncDelegate(string filename);
 
     }
 
