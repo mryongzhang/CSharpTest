@@ -121,4 +121,4 @@ WebService来上传文件存在的问题是效率不高，而且不能传输大�
 <System.Web>配置节下面加上<httpRuntimemaxRequestLength="2097151" />
 
 这样WCFService就完成了，新建一个Console项目或者Web项目测试一下。要注意的
-是Client端的配置必须要和服务端一样，实例程序在这里下载。
+是Client端的配置必须要和服务端一样，[实例程序在这里下载](http://files.cnblogs.com/xiaozhuang/HCUpLoad.rar "实例程序在这里下载")。
