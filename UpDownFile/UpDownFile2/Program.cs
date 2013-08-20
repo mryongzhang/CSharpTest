@@ -23,10 +23,13 @@ namespace UpDownFile2
             }
             else
             {
+                /*
                 string fileurl = Cryptography.Decrypt(args[0].Substring(7));
                 //MessageBox.Show(fileurl);
                 Application.Run(new Form1(fileurl));
+                */
 
+                Application.Run(new StatusForm(args[0].Substring(7)));
 
                 /*
                 string fileurl = Cryptography.Decrypt(args[0].Substring(7));

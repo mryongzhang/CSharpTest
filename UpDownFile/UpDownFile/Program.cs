@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using MSWord = Microsoft.Office.Interop.Word;
+using MSExcel = Microsoft.Office.Interop.Excel;
 
 namespace UpDownFile
 {
@@ -13,13 +14,71 @@ namespace UpDownFile
     {
         static void Main(string[] args)
         {
+            /*
             string url = @"http://www.ganedu.net/images/mugshots/2012/10/fullsize/20121027123249_.doc";
             string dir = @"d:\";
             OfficeFile file = new OfficeFile();
             file.Download(url, dir);
             file.Open();
+            */
+
+            OpenExcelFile();
+ 
+
             Console.ReadKey();
             
+        }
+
+        static void OpenExcelFile()
+        {
+            string FileName = "1.xlsx";
+            string LocalFile = @"d:\1.xlsx";
+            MSExcel.Application m_excel = new MSExcel.Application();
+            Object filename = FileName;
+            Object filefullname = LocalFile;
+            Object confirmConversions = Type.Missing;
+            Object readOnly = Type.Missing;
+            Object addToRecentFiles = Type.Missing;
+            Object passwordDocument = Type.Missing;
+            Object passwordTemplate = Type.Missing;
+            Object revert = Type.Missing;
+            Object writePasswordDocument = Type.Missing;
+            Object writePasswordTemplate = Type.Missing;
+            Object format = Type.Missing;
+            Object encoding = Type.Missing;
+            Object visible = Type.Missing;
+            Object openConflictDocument = Type.Missing;
+            Object openAndRepair = Type.Missing;
+            Object documentDirection = Type.Missing;
+            Object noEncodingDialog = Type.Missing;
+
+            object MissingValue=Type.Missing;
+
+            try
+            {
+                // 打开Excel文档
+                MSExcel.Workbook workbook = m_excel.Workbooks.Open(LocalFile, MissingValue,
+                        MissingValue, MissingValue, MissingValue,
+                        MissingValue, MissingValue, MissingValue,
+                        MissingValue, MissingValue, MissingValue,
+                        MissingValue, MissingValue, MissingValue,
+                        MissingValue);
+
+                m_excel.UserName = "张勇";
+
+                m_excel.Visible = true;
+
+                //m_excel.WorkbookBeforeClose 
+            }
+            catch (System.Exception ex)
+            {
+                Console.WriteLine("打开Excel文档出错");
+
+            }
+
+            return;
+
+
         }
 
     }

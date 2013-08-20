@@ -6,37 +6,53 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using MSWord = Microsoft.Office.Interop.Word;
 using System.Threading;
 using System.ServiceModel;
+using MSWord = Microsoft.Office.Interop.Word;
+using MSExcel = Microsoft.Office.Interop.Excel;
+using ZyUtility;
+using System.ComponentModel;
 
 namespace UpDownFile2
 {
+    /// <summary>
+    /// 自动从URL下载Office文件，之后根据文件的扩展名判断是Word文件还是Excel文件，
+    /// 用Word或Excel打开
+    /// </summary>
     public class OfficeFile
     {
-        public string URL { get; set; }
-        public string Dir { get; set; }
+        public string URL { get; set; }         //被下载的文件地址，绝对路径
+        //public string Dir { get; set; }
         public string LocalFile { get; set; }
         public string FileName { get; set; }
+
+        private string Dir;                     //本地暂存目录
+        private StatusForm statusForm;
+
+        public OfficeFile(string arg, StatusForm form)
+        {
+            // 从arg解码加密过的信息
+            statusForm = form;
+            URL = Cryptography.Decrypt(arg);
+            Dir = @"c:\temp\";
+            FileName = URL.Substring(URL.LastIndexOf("/") + 1);  //被下载的文件名
+            LocalFile = Dir + FileName;   //另存为的绝对路径＋文件名
+
+
+
+
+
+        }
         
         /// <summary>
         /// 下载服务器文件至客户端
-
-        /// </summary>
-        /// <param name="URL">被下载的文件地址，绝对路径</param>
-        /// <param name="Dir">另存放的目录</param>
-        public void Download(string _URL, string _Dir)
+        public void Download()
         {
-            URL = _URL;
-            Dir = _Dir;
             WebClient client = new WebClient();
-            FileName = URL.Substring(URL.LastIndexOf("/") + 1);  //被下载的文件名
-
-            LocalFile = Dir + FileName;   //另存为的绝对路径＋文件名
 
             try
             {
-                WebRequest myre = WebRequest.Create(URL);
+                WebRequest myrequest = WebRequest.Create(URL);
             }
             catch (Exception e)
             {
@@ -46,8 +62,13 @@ namespace UpDownFile2
 
             try
             {
-                client.DownloadFile(URL, LocalFile);
+                Uri uri = new Uri(URL);
+                client.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadFileCallback);
+                // Specify a progress notification handler.
+                client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressCallback);
+                client.DownloadFileAsync(uri, "serverdata.txt");
 
+                //client.DownloadFile(URL, LocalFile);
             }
             catch (Exception e)
             {
@@ -55,6 +76,29 @@ namespace UpDownFile2
                 //MessageBox.Show(exp.Message,"Error");
             }
         }
+
+        private void DownloadProgressCallback(object sender, DownloadProgressChangedEventArgs e)
+        {
+            // Displays the operation identifier, and the transfer progress.
+            statusForm.UpdateDownloadProgress(FileName, e.BytesReceived, e.TotalBytesToReceive, e.ProgressPercentage);
+        }
+
+        private void DownloadFileCallback(object sender, AsyncCompletedEventArgs e)
+        {
+            if (e.Error != null)
+            {
+                //todo: 错误处理
+                return;
+            }
+
+            // 隐藏状态显示窗体
+            statusForm.Hide();
+            // 打开文件
+            Open();
+            
+        }
+
+
 
         public void Open()
         {
@@ -120,8 +164,6 @@ namespace UpDownFile2
                 Console.WriteLine("打开Word文档出错");
                 //MessageBox.Show("打开Word文档出错");
             }
-
-
 
             return;
         }

@@ -17,21 +17,21 @@ namespace UpDownFile2
         {
             InitializeComponent();
             FileUrl = fileurl;
-
+            /*
             string dir = @"d:\";
             OfficeFile file = new OfficeFile();
             file.Download(FileUrl, dir);
             file.Open();
-
+            */
         }
 
         private void button1_Click(object sender, EventArgs e)
-        {
+        {/*
             //string url = @"http://www.ganedu.net/images/mugshots/2012/10/fullsize/20121027123249_.doc";
             string dir = @"d:\";
             OfficeFile file = new OfficeFile();
             file.Download(FileUrl, dir);
-            file.Open();
+            file.Open();*/
         }
 
         private void Form1_Shown(object sender, EventArgs e)
