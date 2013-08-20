@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using MSWord = Microsoft.Office.Interop.Word;
 using System.Threading;
+using System.ServiceModel;
 
 namespace UpDownFile2
 {
@@ -147,8 +148,34 @@ namespace UpDownFile2
         public void Upload(string filename)
         {
             Thread.Sleep(200);
-            FileStream fs = File.Open(filename, FileMode.Open);
-            fs.Close();
+
+            //上传文件
+            BasicHttpBinding binding = new BasicHttpBinding();
+            binding.TransferMode = TransferMode.Streamed;
+            binding.MessageEncoding = WSMessageEncoding.Mtom;
+            binding.SendTimeout = new TimeSpan(0, 10, 0);
+
+            //wcf地址的取得
+            string strWCF = URL.Substring(0, URL.IndexOf("upload")) + @"wcf/UploadService.svc";
+            IUploadService channel = ChannelFactory<IUploadService>.CreateChannel(binding,
+                new EndpointAddress(strWCF));
+
+            /*
+            IUploadService channel = ChannelFactory<IUploadService>.CreateChannel(binding,
+              new EndpointAddress("http://localhost:36014/UploadService.svc"));
+            */
+
+            using (channel as IDisposable)
+            {
+                FileUploadMessage file = new FileUploadMessage();
+                file.SavePath = "ppp";
+                file.FileName = FileName;
+                file.FileData = new FileStream(filename, FileMode.Open);
+
+                channel.UploadFile(file);
+
+                file.FileData.Close();
+            }
             
         }
 
@@ -157,7 +184,7 @@ namespace UpDownFile2
         {
             AsyncDelegate dlgt = (AsyncDelegate)ar.AsyncState;
             dlgt.EndInvoke(ar);
-            MessageBox.Show("done");
+            MessageBox.Show("修改后的文件已上传！");
         }
 
         public delegate void AsyncDelegate(string filename);

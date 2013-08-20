@@ -1,0 +1,47 @@
+﻿@{
+    ViewBag.Title = "About";
+}
+
+<hgroup class="title">
+    <h1>@ViewBag.Title.</h1>
+    <h2>@ViewBag.Message</h2>
+</hgroup>
+
+<article>
+    <p>
+        Use this area to provide additional information.
+    </p>
+
+    <p>
+        Use this area to provide additional information.
+    </p>
+
+    <p>
+        Use this area to provide additional information.
+    </p>
+
+    @{
+        //string str = "test://" + ZyUtility.Cryptography.Encrypt("sdfasdfa"); 
+        //string str = "test://" + ZyUtility.Cryptography.Encrypt(Request.Url.AbsoluteUri.Replace(Request.Url.AbsolutePath, "") + "filepath" + "userid=234234");     
+        string absoluteUri = Request.Url.AbsoluteUri.Replace(Request.Url.AbsolutePath, "");
+        string str1 = "ycsy://" + ZyUtility.Cryptography.Encrypt(absoluteUri + @"/upload/1.docx");
+        string str2 = "ycsy://" + ZyUtility.Cryptography.Encrypt(absoluteUri + @"/upload/2.doc");  
+    }
+
+    <a href=@str1>file1</a> <br />
+    <a href=@str2>file2</a>
+
+</article>
+
+<aside>
+    <h3>Aside Title</h3>
+    <p>
+        Use this area to provide additional information.
+    </p>
+    <ul>
+        <li>@Html.ActionLink("Home", "Index", "Home")</li>
+        <li>@Html.ActionLink("About", "About", "Home")</li>
+        <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+    </ul>
+
+</aside>
