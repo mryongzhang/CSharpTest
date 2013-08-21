@@ -25,11 +25,15 @@
         //string str = "test://" + ZyUtility.Cryptography.Encrypt(Request.Url.AbsoluteUri.Replace(Request.Url.AbsolutePath, "") + "filepath" + "userid=234234");     
         string absoluteUri = Request.Url.AbsoluteUri.Replace(Request.Url.AbsolutePath, "");
         string str1 = "ycsy://" + ZyUtility.Cryptography.Encrypt(absoluteUri + @"/upload/1.docx");
-        string str2 = "ycsy://" + ZyUtility.Cryptography.Encrypt(absoluteUri + @"/upload/2.doc");  
+        string str2 = "ycsy://" + ZyUtility.Cryptography.Encrypt(absoluteUri + @"/upload/2.doc");
+        string str3 = "ycsy://" + ZyUtility.Cryptography.Encrypt(absoluteUri + @"/upload/3.xlsx");
+        string str4 = "ycsy://" + ZyUtility.Cryptography.Encrypt(absoluteUri + @"/upload/4.xls");  
     }
 
-    <a href=@str1>file1</a> <br />
-    <a href=@str2>file2</a>
+    <a href=@str1>1.docx</a> <br />
+    <a href=@str2>2.doc</a> <br />
+    <a href=@str3>3.xlsx</a> <br />
+    <a href=@str4>4.xls</a> <br />
 
 </article>
 
