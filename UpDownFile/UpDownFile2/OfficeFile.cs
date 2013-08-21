@@ -189,8 +189,8 @@ namespace UpDownFile2
                 //doc.ActiveWindow.ToggleRibbon();
 
                 // 设定修订者的名称
-                //m_word.ActiveDocument.Application.UserName = "张勇";
-                m_word.UserName = "张勇";
+                //m_word.ActiveDocument.Application.UserName = "UserName";
+                m_word.UserName = "UserName";
 
                 // 设置文档保护，只允许读
                 //doc.Protect(MSWord.WdProtectionType.wdAllowOnlyReading);
@@ -234,7 +234,7 @@ namespace UpDownFile2
                         MissingValue, MissingValue, MissingValue,
                         MissingValue);
 
-                m_excel.UserName = "张勇";
+                m_excel.UserName = "UserName";
                 m_excel.Visible = true;
 
                 //捕获文档关闭的事件，关键！
