@@ -21,19 +21,47 @@
     </p>
 
     @{
+        
         //string str = "test://" + ZyUtility.Cryptography.Encrypt("sdfasdfa"); 
         //string str = "test://" + ZyUtility.Cryptography.Encrypt(Request.Url.AbsoluteUri.Replace(Request.Url.AbsolutePath, "") + "filepath" + "userid=234234");     
         string absoluteUri = Request.Url.AbsoluteUri.Replace(Request.Url.AbsolutePath, "");
-        string str1 = "ycsy://" + ZyUtility.Cryptography.Encrypt(absoluteUri + @"/upload/1.docx");
+
+        string str1 = ZyUtility.Cryptography.EncryptedFileUri(absoluteUri, @"/upload/1.docx", "read", "user1", "username1"); //"ycsy://" + ZyUtility.Cryptography.Encrypt(absoluteUri + @"/upload/1.docx");
         string str2 = "ycsy://" + ZyUtility.Cryptography.Encrypt(absoluteUri + @"/upload/2.doc");
         string str3 = "ycsy://" + ZyUtility.Cryptography.Encrypt(absoluteUri + @"/upload/3.xlsx");
         string str4 = "ycsy://" + ZyUtility.Cryptography.Encrypt(absoluteUri + @"/upload/4.xls");  
     }
 
-    <a href=@str1>1.docx</a> <br />
-    <a href=@str2>2.doc</a> <br />
-    <a href=@str3>3.xlsx</a> <br />
-    <a href=@str4>4.xls</a> <br />
+    <table border="1">
+        <thead>
+            <tr>
+                <th>文件</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tr>
+            <td>1.docx</td>
+            <td><a href=@ZyUtility.Cryptography.EncryptedFileUri(absoluteUri, @"/upload/1.docx", "read", "user1", "username1")>查看</a>  <a href=@ZyUtility.Cryptography.EncryptedFileUri(absoluteUri, @"/upload/1.docx", "edit", "user1", "username1")>编辑</a></td>
+        </tr>
+        <tr>
+            <td>2.doc</td>
+            <td><a href=@ZyUtility.Cryptography.EncryptedFileUri(absoluteUri, @"/upload/2.doc", "read", "user2", "username2")>查看</a>  <a href=@ZyUtility.Cryptography.EncryptedFileUri(absoluteUri, @"/upload/2.doc", "edit", "user2", "username2")>编辑</a></td>
+        </tr>
+        <tr>
+            <td>3.xlsx</td>
+            <td><a href=@ZyUtility.Cryptography.EncryptedFileUri(absoluteUri, @"/upload/3.xlsx", "read", "user3", "username3")>查看</a>  <a href=@ZyUtility.Cryptography.EncryptedFileUri(absoluteUri, @"/upload/3.xlsx", "edit", "user3", "username3")>编辑</a></td>
+        </tr>
+        <tr>
+            <td>4.xls</td>
+            <td><a href=@ZyUtility.Cryptography.EncryptedFileUri(absoluteUri, @"/upload/4.xls", "read", "user4", "username4")>查看</a>  <a href=@ZyUtility.Cryptography.EncryptedFileUri(absoluteUri, @"/upload/4.xls", "edit", "user4", "username4")>编辑</a></td>
+        </tr>
+    </table>
+    @*
+    1.docx <a href=@str1>1.docx</a> <br />
+    2.doc <a href=@str2>2.doc</a> <br />
+    3.xlsx <a href=@str3>3.xlsx</a> <br />
+    4.xls <a href=@str4>4.xls</a> <br />
+    *@
 
 </article>
 

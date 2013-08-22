@@ -78,5 +78,28 @@ namespace ZyUtility
                 }
             }
         }
+
+        /// <summary>
+        /// 生成加密的文件链接字符串
+        /// </summary>
+        /// <param name="absoluteUri">Uri地址，例：http://192.168.1.1:8080</param>
+        /// <param name="localfileuri">本地文件相对地址，例：/upload/file1.docx</param>
+        /// <param name="openmode">文件的打开模式，read:只读，edit：编辑</param>
+        /// <param name="userid">当前用户ID</param>
+        /// <param name="username">当前用户名</param>
+        /// <returns>加密后的文件链接字符串，例:ycsy://sfdkj239asdfasdfajsdfjajsd</returns>
+        public static string EncryptedFileUri(string absoluteUri, string localfileuri, string openmode, string userid, string username)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("url=").Append(absoluteUri).Append(localfileuri)
+              .Append("|")
+              .Append("openmode=").Append(openmode)
+              .Append("|")
+              .Append("userid=").Append(userid)
+              .Append("|")
+              .Append("username=").Append(username);
+
+            return "ycsy://" + ZyUtility.Cryptography.Encrypt(sb.ToString());
+        }
     }
 }

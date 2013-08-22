@@ -12,6 +12,7 @@ using MSWord = Microsoft.Office.Interop.Word;
 using MSExcel = Microsoft.Office.Interop.Excel;
 using ZyUtility;
 using System.ComponentModel;
+using System.Collections.Specialized;
 
 namespace UpDownFile2
 {
@@ -21,32 +22,59 @@ namespace UpDownFile2
     /// </summary>
     public class OfficeFile
     {
-        public string URL { get; set; }         // 被下载的internet文件地址（绝对路径）
-        //public string Dir { get; set; }
         public string LocalFile { get; set; }   // 本地存储文件名（包含路径）
         public string FileName { get; set; }    // 文件名
 
-        private string Dir;                     // 本地暂存目录
-        private StatusForm statusForm;          // 状态显示窗口
+        //本地暂存路径，\My Documents\ycsytemp\
+        private readonly string Dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"ycsytemp\");
+
+        private StatusForm statusForm;   // 状态显示窗口
 
         enum FileType { Word, Excel };
         private FileType fileType;
 
-        DateTime fileLastWriteTime;             // 文件刚下载完毕时的更新时间
+        DateTime fileLastWriteTime;      // 文件刚下载完毕时的更新时间
+
+
+        private struct ServerFileInfo
+        {
+            public string URL { get; set; } //被下载的internet文件地址（绝对路径）
+            public string OpenMode { get; set; }
+            public string UserID { get; set; }
+            public string UserName { get; set; }
+        }
+
+        //服务器端传回的链接字符串中的信息
+        ServerFileInfo serverFile = new ServerFileInfo();
 
         public OfficeFile(string arg, StatusForm form)
         {
-            // 从arg解码加密过的信息
             statusForm = form;
-            URL = Cryptography.Decrypt(arg);
-            Dir = @"c:\temp\";
+
+            // 从arg解密后的信息
+            string DecryStr = Cryptography.Decrypt(arg);
+            //要查询的字段分解
+            StringDictionary sd = new StringDictionary();
+            int index;
+            string[] SplitttedData = DecryStr.Split(new char[] { '|' });
+            foreach (string SingleData in SplitttedData)
+            {
+                index = SingleData.IndexOf('=');
+                sd.Add(SingleData.Substring(0, index), SingleData.Substring(index + 1));
+            }
+
+            //解密后的各个字段值
+            serverFile.URL = sd["url"];
+            serverFile.OpenMode = sd["openmode"];
+            serverFile.UserID = sd["userid"];
+            serverFile.UserName = sd["username"];
 
             if (!Directory.Exists(Dir))
             {
                 Directory.CreateDirectory(Dir);
             }
 
-            FileName = URL.Substring(URL.LastIndexOf("/") + 1);  //被下载的文件名
+            FileName = serverFile.URL.Substring(serverFile.URL.LastIndexOf("/") + 1);  //被下载的文件名
             LocalFile = Dir + FileName;   //另存为的绝对路径＋文件名
 
             string fileExtension = Path.GetExtension(LocalFile);
@@ -75,7 +103,7 @@ namespace UpDownFile2
 
             try
             {
-                WebRequest myrequest = WebRequest.Create(URL);
+                WebRequest myrequest = WebRequest.Create(serverFile.URL);
             }
             catch (Exception e)
             {
@@ -86,7 +114,7 @@ namespace UpDownFile2
             try
             {
                 // 异步方式下载Internet上的文件
-                Uri uri = new Uri(URL);
+                Uri uri = new Uri(serverFile.URL);
                 client.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadFileCallback);
                 // Specify a progress notification handler.
                 client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressCallback);
@@ -176,35 +204,37 @@ namespace UpDownFile2
                         ref openAndRepair, ref documentDirection, ref noEncodingDialog
                         );
 
-                // 启用修改履历
-                doc.TrackRevisions = true;
-                //doc.ShowRevisions = false;    //若设置此属性，则打开的word文档无论修改与否，word都认为进行了修改，每次都会保存。
+                // 判断是否以只读模式打开
+                if (serverFile.OpenMode == "read")
+                {
+                    // 设置文档保护，只允许读
+                    doc.Protect(MSWord.WdProtectionType.wdAllowOnlyReading);
+                    // 隐藏工具栏
+                    //doc.ActiveWindow.ToggleRibbon();
 
-                // 设定word的显示模式是阅读模式
-                // doc.ActiveWindow.View.Type = MSWord.WdViewType.wdReadingView;
+                    /* 另外一种方式
+                    // 设定word的显示模式是阅读模式
+                    // doc.ActiveWindow.View.Type = MSWord.WdViewType.wdReadingView;
+                    */
+                }
+                else
+                {
+                    // 启用修改履历
+                    doc.TrackRevisions = true;
+                    //doc.ShowRevisions = false;    //若设置此属性，则打开的word文档无论修改与否，word都认为进行了修改，每次都会保存。
+                    
+                    // 设定修订者的名称
+                    //m_word.ActiveDocument.Application.UserName = serverFile.UserName;
+                    m_word.UserName = serverFile.UserName;
+                }
+
                 m_word.Visible = true;
-
-
-                // 隐藏工具栏
-                //doc.ActiveWindow.ToggleRibbon();
-
-                // 设定修订者的名称
-                //m_word.ActiveDocument.Application.UserName = "UserName";
-                m_word.UserName = "UserName";
-
-                // 设置文档保护，只允许读
-                //doc.Protect(MSWord.WdProtectionType.wdAllowOnlyReading);
 
                 //捕获文档关闭的事件，关键！
                 m_word.DocumentBeforeClose += new MSWord.ApplicationEvents4_DocumentBeforeCloseEventHandler(wordApp_DocumentBeforeClose);
                 
                 // 显示文件已打开的提示
                 statusForm.ShowStatus(StatusForm.StatusType.FileOpened);
-                
-                //m_word = null;
-
-                //MessageBox.Show(m_word.Documents.Count.ToString());  
-                //MessageBox.Show(m_word.Documents[1].FullName.ToString());  
             }
             catch (System.Exception ex)
             {
@@ -234,7 +264,16 @@ namespace UpDownFile2
                         MissingValue, MissingValue, MissingValue,
                         MissingValue);
 
-                m_excel.UserName = "UserName";
+                // 判断是否以只读模式打开
+                if (serverFile.OpenMode == "read")
+                {
+                    workbook.Protect(MissingValue, true, true);
+                }
+                else
+                {
+                    m_excel.UserName = "UserName";
+                }
+
                 m_excel.Visible = true;
 
                 //捕获文档关闭的事件，关键！
@@ -257,13 +296,21 @@ namespace UpDownFile2
             //当关闭程序打开的word文档的时候
             if (string.Compare(Doc.FullName, LocalFile, true) == 0)
             {
-                // 保存文档
+                // 保存文档, word好像无法忽略修改项保存退出，所以只能都保存一下。
                 if (!Doc.Saved)
                 {
                     Doc.Save();
                 }
+
                 // 关闭word
                 Doc.Application.Quit();
+
+                if (serverFile.OpenMode == "read")
+                {
+                    // 程序退出
+                    Environment.Exit(0);
+                    return;
+                }
 
                 // 异步方式启动上传文件函数
                 AsyncDelegate dlgt = new AsyncDelegate(Upload);
@@ -277,9 +324,13 @@ namespace UpDownFile2
             if (string.Compare(Workbook.FullName, LocalFile, true) == 0)
             {
                 // 保存文档
-                if (!Workbook.Saved)
+                if (serverFile.OpenMode == "edit" && !Workbook.Saved)
                 {
                     Workbook.Save();
+                }
+                else
+                {
+                    Workbook.Close(false);
                 }
                 // 关闭excel
                 Workbook.Application.Quit();
@@ -320,7 +371,7 @@ namespace UpDownFile2
             binding.SendTimeout = new TimeSpan(0, 10, 0);
 
             //wcf地址的取得
-            string strWCF = URL.Substring(0, URL.IndexOf("upload")) + @"wcf/UploadService.svc";
+            string strWCF = serverFile.URL.Substring(0, serverFile.URL.IndexOf("upload")) + @"wcf/UploadService.svc";
             IUploadService channel = ChannelFactory<IUploadService>.CreateChannel(binding,
                 new EndpointAddress(strWCF));
 
