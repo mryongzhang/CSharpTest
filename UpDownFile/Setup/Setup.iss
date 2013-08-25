@@ -38,7 +38,7 @@ Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 ;本段处理程序在注册表中的键值
 Root:HKCR;Subkey:Ycsy;ValueType:string;ValueName:"URL Protocol";ValueData:"{app}\FileOnlineEdit.exe"
 Root:HKCR;Subkey:"Ycsy\DefaultIcon";ValueType:string;ValueData:"%SystemRoot%\\system32\\url.dll,0"
-Root:HKCR;Subkey:"Ycsy\shell\open\command";ValueType:string;ValueData:"""{app}\FileOnlineEdit.exe\"" ""%1"""
+Root:HKCR;Subkey:"Ycsy\shell\open\command";ValueType:string;ValueData:"""{app}\FileOnlineEdit.exe"" ""%1"""
 
 [Code]
 //卸载时删除安装是添加的注册表项

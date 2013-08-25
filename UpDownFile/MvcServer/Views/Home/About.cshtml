@@ -21,10 +21,7 @@
     </p>
 
     @{
-        
-        //string str = "test://" + ZyUtility.Cryptography.Encrypt("sdfasdfa"); 
-        //string str = "test://" + ZyUtility.Cryptography.Encrypt(Request.Url.AbsoluteUri.Replace(Request.Url.AbsolutePath, "") + "filepath" + "userid=234234");     
-        string absoluteUri = Request.Url.AbsoluteUri.Replace(Request.Url.AbsolutePath, "");
+        string absoluteUri = Request.Url.AbsoluteUri.Substring(0, Request.Url.AbsoluteUri.IndexOf(Request.Url.AbsolutePath));
 
         string str1 = ZyUtility.Cryptography.EncryptedFileUri(absoluteUri, @"/upload/1.docx", "read", "user1", "username1"); //"ycsy://" + ZyUtility.Cryptography.Encrypt(absoluteUri + @"/upload/1.docx");
         string str2 = "ycsy://" + ZyUtility.Cryptography.Encrypt(absoluteUri + @"/upload/2.doc");
