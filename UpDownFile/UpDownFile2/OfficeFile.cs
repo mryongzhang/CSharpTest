@@ -14,7 +14,7 @@ using ZyUtility;
 using System.ComponentModel;
 using System.Collections.Specialized;
 
-namespace UpDownFile2
+namespace FileOnlineEdit
 {
     /// <summary>
     /// 自动从URL下载Office文件，之后根据文件的扩展名判断是Word文件还是Excel文件，

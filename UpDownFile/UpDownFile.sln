@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpDownFile", "UpDownFile\UpDownFile.csproj", "{30D6D44B-F256-4F14-9531-75E777D6E736}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpDownFile2", "UpDownFile2\UpDownFile2.csproj", "{2940DA34-592E-4026-9624-8AAF10955BDC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileOnlineEdit", "UpDownFile2\FileOnlineEdit.csproj", "{2940DA34-592E-4026-9624-8AAF10955BDC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcServer", "MvcServer\MvcServer.csproj", "{867922BF-3C0D-492D-8C92-7F85320F38E9}"
 EndProject

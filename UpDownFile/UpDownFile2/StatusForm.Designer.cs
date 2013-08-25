@@ -1,4 +1,4 @@
-﻿namespace UpDownFile2
+﻿namespace FileOnlineEdit
 {
     partial class StatusForm
     {
@@ -134,7 +134,7 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Image = global::UpDownFile2.Properties.Resources.Upload_Database;
+            this.pictureBox1.Image = global::FileOnlineEdit.Properties.Resources.Upload_Database;
             this.pictureBox1.Location = new System.Drawing.Point(39, 5);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(77, 88);
@@ -144,7 +144,7 @@
             // 
             // pictureBox2
             // 
-            this.pictureBox2.Image = global::UpDownFile2.Properties.Resources.Word_icon;
+            this.pictureBox2.Image = global::FileOnlineEdit.Properties.Resources.Word_icon;
             this.pictureBox2.Location = new System.Drawing.Point(30, 3);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(77, 88);
@@ -154,7 +154,7 @@
             // 
             // pictureBox3
             // 
-            this.pictureBox3.Image = global::UpDownFile2.Properties.Resources.Excel_icon;
+            this.pictureBox3.Image = global::FileOnlineEdit.Properties.Resources.Excel_icon;
             this.pictureBox3.Location = new System.Drawing.Point(109, 3);
             this.pictureBox3.Name = "pictureBox3";
             this.pictureBox3.Size = new System.Drawing.Size(77, 88);

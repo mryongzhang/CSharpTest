@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace UpDownFile2
+namespace FileOnlineEdit
 {
     public partial class StatusForm : Form
     {

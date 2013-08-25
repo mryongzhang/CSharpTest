@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ZyUtility;
 
-namespace UpDownFile2
+namespace FileOnlineEdit
 {
     static class Program
     {
