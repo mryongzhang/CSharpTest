@@ -1,0 +1,59 @@
+﻿@using MvcTest.Models
+@model UserQueryModel
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table>
+    <tr>
+        <th>
+            User Name
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model.Users) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.UserName)
+        </td>
+
+        <td style="width:300px;">
+            <input id="Member_@item.UserName" type="checkbox" checked="@Roles.IsUserInRole(item.UserName,"Member")" />
+            <label for="Member_@item.UserName">Members</label>
+            <input id="Manager_@item.UserName" type="checkbox" checked="@Roles.IsUserInRole(item.UserName,"Manager")" />
+            <label for="Manager_@item.UserName">Managers</label>
+        </td>
+
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.UserId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.UserId }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.UserId }, new { @onclick="return confirm('确定要删除此用户？');" })
+        </td>
+    </tr>
+}
+
+</table>
+
+<script>
+    var setUrl = '@Url.Content("~/Account/SetRole")'
+</script>
+<script>
+    $(function () {
+        $("table input[type=checkbox]").click(function () {
+            var settings = {};
+            settings.Id = this.id;
+            settings.Checked = this.checked;
+            $.post(setUrl, settings, function (data) {
+                if (data != "")
+                    alert(data);
+            });
+        });
+    });
+</script>
