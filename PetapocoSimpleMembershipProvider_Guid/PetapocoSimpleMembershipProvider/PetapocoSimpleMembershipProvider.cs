@@ -121,17 +121,17 @@ namespace PetapocoSimpleMembershipProvider
 
         private string SafeUserTableName
         {
-            get { return "[" + UserTableName + "]"; }
+            get { return UserTableName; }
         }
 
         private string SafeUserIdColumn
         {
-            get { return "[" + UserIdColumn + "]"; }
+            get { return UserIdColumn; }
         }
 
         private string SafeUserNameColumn
         {
-            get { return "[" + UserNameColumn + "]"; }
+            get { return UserNameColumn; }
         }
 
         // represents the User table for the app
@@ -255,12 +255,12 @@ namespace PetapocoSimpleMembershipProvider
                         ConfirmationToken                       nvarchar(128)       ,
                         IsConfirmed                             bit                 DEFAULT 0,
                         LastPasswordFailureDate                 datetime            ,
-                        PasswordFailuresSinceLastSuccess         int                 NOT NULL DEFAULT 0,
+                        PswdFailuresSinceLastSuccess            int                 NOT NULL DEFAULT 0,
                         Password                                nvarchar(128)       NOT NULL,
                         PasswordChangedDate                     datetime            ,
                         PasswordSalt                            nvarchar(128)       NOT NULL,
                         PasswordVerificationToken               nvarchar(128)       ,
-                        PasswordVerificationTokenExpirationDate datetime)");
+                        PswdVerificationTokenExpDate            datetime)");
                     // TODO: Do we want to add FK constraint to user table too?
                     //                        CONSTRAINT fk_UserId FOREIGN KEY (UserId) REFERENCES "+UserTableName+"("+UserIdColumn+"))");
                 }
@@ -304,9 +304,9 @@ namespace PetapocoSimpleMembershipProvider
             using (var db = ConnectToDatabase())
             {
                 var result = db.QuerySingle(@"SELECT UserId FROM " + MembershipTableName + " WHERE (PasswordVerificationToken = @0)", token);
-                if (result != null && result.UserId != null)
+                if (result != null && result.USERID != null)
                 {
-                    return (int)result.UserId;
+                    return (int)result.USERID;
                 }
                 return -1;
             }
@@ -330,20 +330,20 @@ namespace PetapocoSimpleMembershipProvider
             {
                 // We need to compare the token using a case insensitive comparison however it seems tricky to do this uniformly across databases when representing the token as a string. 
                 // Therefore verify the case on the client
-                var row = db.QuerySingle("SELECT m.[UserId], m.[ConfirmationToken] FROM " + MembershipTableName + " m JOIN " + SafeUserTableName + " u"
-                                         + " ON m.[UserId] = u." + SafeUserIdColumn
-                                         + " WHERE m.[ConfirmationToken] = @0 AND"
+                var row = db.QuerySingle("SELECT m.UserId, m.ConfirmationToken FROM " + MembershipTableName + " m JOIN " + SafeUserTableName + " u"
+                                         + " ON m.UserId = u." + SafeUserIdColumn
+                                         + " WHERE m.ConfirmationToken = @0 AND"
                                          + " u." + SafeUserNameColumn + " = @1", accountConfirmationToken, userName);
                 if (row == null)
                 {
                     return false;
                 }
-                string userId = row.UserId;
-                string expectedToken = row.ConfirmationToken;
+                string userId = row.USERID;
+                string expectedToken = row.CONFIRMATIONTOKEN;
 
                 if (String.Equals(accountConfirmationToken, expectedToken, StringComparison.Ordinal))
                 {
-                    int affectedRows = db.Execute("UPDATE " + MembershipTableName + " SET [IsConfirmed] = 1 WHERE [UserId] = @0", userId);
+                    int affectedRows = db.Execute("UPDATE " + MembershipTableName + " SET IsConfirmed = 1 WHERE UserId = @0", userId);
                     return affectedRows > 0;
                 }
                 return false;
@@ -364,8 +364,8 @@ namespace PetapocoSimpleMembershipProvider
             {
                 // We need to compare the token using a case insensitive comparison however it seems tricky to do this uniformly across databases when representing the token as a string. 
                 // Therefore verify the case on the client
-                var rows = db.Query("SELECT [UserId], [ConfirmationToken] FROM " + MembershipTableName + " WHERE [ConfirmationToken] = @0", accountConfirmationToken)
-                    .Where(r => ((string)r.ConfirmationToken).Equals(accountConfirmationToken, StringComparison.Ordinal))
+                var rows = db.Query("SELECT UserId, ConfirmationToken FROM " + MembershipTableName + " WHERE ConfirmationToken = @0", accountConfirmationToken)
+                    .Where(r => ((string)r.CONFIRMATIONTOKEN).Equals(accountConfirmationToken, StringComparison.Ordinal))
                     .ToList();
                 Debug.Assert(rows.Count < 2, "By virtue of the fact that the ConfirmationToken is random and unique, we can never have two tokens that are identical.");
                 if (!rows.Any())
@@ -373,8 +373,8 @@ namespace PetapocoSimpleMembershipProvider
                     return false;
                 }
                 var row = rows.First();
-                string userId = row.UserId;
-                int affectedRows = db.Execute("UPDATE " + MembershipTableName + " SET [IsConfirmed] = 1 WHERE [UserId] = @0", userId);
+                string userId = row.USERID;
+                int affectedRows = db.Execute("UPDATE " + MembershipTableName + " SET IsConfirmed = 1 WHERE UserId = @0", userId);
                 return affectedRows > 0;
             }
         }
@@ -418,8 +418,8 @@ namespace PetapocoSimpleMembershipProvider
                 }
 
                 // Step 2: Check if the user exists in the Membership table: Error if yes.
-                var result = db.QuerySingle(@"SELECT COUNT(*) as cnt FROM [" + MembershipTableName + "] WHERE UserId = @0", uid);
-                if (result.cnt > 0)
+                var result = db.QuerySingle(@"SELECT COUNT(*) as cnt FROM " + MembershipTableName + " WHERE UserId = @0", uid);
+                if (result.CNT > 0)
                 {
                     throw new MembershipCreateUserException(MembershipCreateStatus.DuplicateUserName);
                 }
@@ -434,7 +434,7 @@ namespace PetapocoSimpleMembershipProvider
                 }
                 int defaultNumPasswordFailures = 0;
 
-                int insert = db.Execute(@"INSERT INTO [" + MembershipTableName + "] (UserId, [Password], PasswordSalt, IsConfirmed, ConfirmationToken, CreateDate, PasswordChangedDate, PasswordFailuresSinceLastSuccess)"
+                int insert = db.Execute(@"INSERT INTO " + MembershipTableName + " (UserId, Password, PasswordSalt, IsConfirmed, ConfirmationToken, CreateDate, PasswordChangedDate, PswdFailuresSinceLastSuccess)"
                                         + " VALUES (@0, @1, @2, @3, @4, @5, @5, @6)", uid, hashedPassword, String.Empty /* salt column is unused */, !requireConfirmationToken, dbtoken, DateTime.UtcNow, defaultNumPasswordFailures);
                 if (insert != 1)
                 {
@@ -662,10 +662,10 @@ namespace PetapocoSimpleMembershipProvider
 
         private static int GetPasswordFailuresSinceLastSuccess(DatabaseWrapper db, string userId)
         {
-            var failure = db.QueryValue(@"SELECT PasswordFailuresSinceLastSuccess FROM " + MembershipTableName + " WHERE (UserId = @0)", userId);
+            var failure = db.QueryValue(@"SELECT PswdFailuresSinceLastSuccess FROM " + MembershipTableName + " WHERE (UserId = @0)", userId);
             if (failure != null)
             {
-                return failure;
+                return (int)failure;
             }
             return -1;
         }
@@ -699,7 +699,7 @@ namespace PetapocoSimpleMembershipProvider
                 var createDate = db.QueryValue(@"SELECT CreateDate FROM " + MembershipTableName + " WHERE (UserId = @0)", userId);
                 if (createDate != null)
                 {
-                    return createDate;
+                    return (DateTime)createDate;
                 }
                 return DateTime.MinValue;
             }
@@ -717,9 +717,9 @@ namespace PetapocoSimpleMembershipProvider
                 }
 
                 var pwdChangeDate = db.QuerySingle(@"SELECT PasswordChangedDate FROM " + MembershipTableName + " WHERE (UserId = @0)", userId);
-                if (pwdChangeDate != null && pwdChangeDate.PasswordChangedDate != null)
+                if (pwdChangeDate != null && pwdChangeDate.PASSWORDCHANGEDDATE != null)
                 {
-                    return (DateTime)pwdChangeDate.PasswordChangedDate;
+                    return (DateTime)pwdChangeDate.PASSWORDCHANGEDDATE;
                 }
                 return DateTime.MinValue;
             }
@@ -737,9 +737,9 @@ namespace PetapocoSimpleMembershipProvider
                 }
 
                 var failureDate = db.QuerySingle(@"SELECT LastPasswordFailureDate FROM " + MembershipTableName + " WHERE (UserId = @0)", userId);
-                if (failureDate != null && failureDate.LastPasswordFailureDate != null)
+                if (failureDate != null && failureDate.LASTPASSWORDFAILUREDATE != null)
                 {
-                    return (DateTime)failureDate.LastPasswordFailureDate;
+                    return (DateTime)failureDate.LASTPASSWORDFAILUREDATE;
                 }
                 return DateTime.MinValue;
             }
@@ -752,14 +752,14 @@ namespace PetapocoSimpleMembershipProvider
             if (verificationSucceeded)
             {
                 // Reset password failure count on successful credential check
-                db.Execute(@"UPDATE " + MembershipTableName + " SET PasswordFailuresSinceLastSuccess = 0 WHERE (UserId = @0)", userId);
+                db.Execute(@"UPDATE " + MembershipTableName + " SET PswdFailuresSinceLastSuccess = 0 WHERE (UserId = @0)", userId);
             }
             else
             {
                 int failures = GetPasswordFailuresSinceLastSuccess(db, userId);
                 if (failures != -1)
                 {
-                    db.Execute(@"UPDATE " + MembershipTableName + " SET PasswordFailuresSinceLastSuccess = @1, LastPasswordFailureDate = @2 WHERE (UserId = @0)", userId, failures + 1, DateTime.UtcNow);
+                    db.Execute(@"UPDATE " + MembershipTableName + " SET PswdFailuresSinceLastSuccess = @1, LastPasswordFailureDate = @2 WHERE (UserId = @0)", userId, failures + 1, DateTime.UtcNow);
                 }
             }
             return verificationSucceeded;
@@ -767,7 +767,7 @@ namespace PetapocoSimpleMembershipProvider
 
         private string GetHashedPassword(DatabaseWrapper db, string userId)
         {
-            var pwdQuery = db.Query(@"SELECT m.[Password] " +
+            var pwdQuery = db.Query(@"SELECT m.Password " +
                                     @"FROM " + MembershipTableName + " m, " + SafeUserTableName + " u " +
                                     @"WHERE m.UserId = @0 AND m.UserId = u." + SafeUserIdColumn, userId).ToList();
             // REVIEW: Should get exactly one match, should we throw if we get > 1?
@@ -775,7 +775,7 @@ namespace PetapocoSimpleMembershipProvider
             {
                 return null;
             }
-            return pwdQuery[0].Password;
+            return pwdQuery[0].PASSWORD;
         }
 
         // Ensures the user exists in the accounts table
@@ -794,7 +794,7 @@ namespace PetapocoSimpleMembershipProvider
                 }
             }
 
-            int result = db.QueryValue(@"SELECT COUNT(*) FROM " + MembershipTableName + " WHERE (UserId = @0 AND IsConfirmed = 1)", userId);
+            int result = (int)db.QueryValue(@"SELECT COUNT(*) FROM " + MembershipTableName + " WHERE (UserId = @0 AND IsConfirmed = 1)", userId);
             if (result == 0)
             {
                 if (throwException)
@@ -839,12 +839,12 @@ namespace PetapocoSimpleMembershipProvider
                     throw new InvalidOperationException(String.Format(CultureInfo.CurrentCulture, WebDataResources.Security_NoUserFound, userName));
                 }
 
-                string token = db.QueryValue(@"SELECT PasswordVerificationToken FROM " + MembershipTableName + " WHERE (UserId = @0 AND PasswordVerificationTokenExpirationDate > @1)", userId, DateTime.UtcNow);
+                string token = (string)db.QueryValue(@"SELECT PasswordVerificationToken FROM " + MembershipTableName + " WHERE (UserId = @0 AND PswdVerificationTokenExpDate > @1)", userId, DateTime.UtcNow);
                 if (token == null)
                 {
                     token = GenerateToken();
 
-                    int rows = db.Execute(@"UPDATE " + MembershipTableName + " SET PasswordVerificationToken = @0, PasswordVerificationTokenExpirationDate = @1 WHERE (UserId = @2)", token, DateTime.UtcNow.AddMinutes(tokenExpirationInMinutesFromNow), userId);
+                    int rows = db.Execute(@"UPDATE " + MembershipTableName + " SET PasswordVerificationToken = @0, PswdVerificationTokenExpDate = @1 WHERE (UserId = @2)", token, DateTime.UtcNow.AddMinutes(tokenExpirationInMinutesFromNow), userId);
                     if (rows != 1)
                     {
                         throw new ProviderException(WebDataResources.Security_DbFailure);
@@ -882,14 +882,14 @@ namespace PetapocoSimpleMembershipProvider
             }
             using (var db = ConnectToDatabase())
             {
-                string userId = db.QueryValue(@"SELECT UserId FROM " + MembershipTableName + " WHERE (PasswordVerificationToken = @0 AND PasswordVerificationTokenExpirationDate > @1)", token, DateTime.UtcNow);
+                string userId = (string)db.QueryValue(@"SELECT UserId FROM " + MembershipTableName + " WHERE (PasswordVerificationToken = @0 AND PswdVerificationTokenExpDate > @1)", token, DateTime.UtcNow);
                 if (userId != null)
                 {
                     bool success = SetPassword(db, userId, newPassword);
                     if (success)
                     {
                         // Clear the Token on success
-                        int rows = db.Execute(@"UPDATE " + MembershipTableName + " SET PasswordVerificationToken = NULL, PasswordVerificationTokenExpirationDate = NULL WHERE (UserId = @0)", userId);
+                        int rows = db.Execute(@"UPDATE " + MembershipTableName + " SET PasswordVerificationToken = NULL, PswdVerificationTokenExpDate = NULL WHERE (UserId = @0)", userId);
                         if (rows != 1)
                         {
                             throw new ProviderException(WebDataResources.Security_DbFailure);
@@ -986,7 +986,7 @@ namespace PetapocoSimpleMembershipProvider
                 if (oldUserId == null)
                 {
                     // account doesn't exist. create a new one.
-                    int insert = db.Execute(@"INSERT INTO [" + OAuthMembershipTableName + "] (Provider, ProviderUserId, UserId) VALUES (@0, @1, @2)", provider, providerUserId, userId);
+                    int insert = db.Execute(@"INSERT INTO " + OAuthMembershipTableName + " (Provider, ProviderUserId, UserId) VALUES (@0, @1, @2)", provider, providerUserId, userId);
                     if (insert != 1)
                     {
                         throw new MembershipCreateUserException(MembershipCreateStatus.ProviderError);
@@ -995,7 +995,7 @@ namespace PetapocoSimpleMembershipProvider
                 else
                 {
                     // account already exist. update it
-                    int insert = db.Execute(@"UPDATE [" + OAuthMembershipTableName + "] SET UserId = @2 WHERE UPPER(Provider)=@0 AND UPPER(ProviderUserId)=@1", provider, providerUserId, userId);
+                    int insert = db.Execute(@"UPDATE " + OAuthMembershipTableName + " SET UserId = @2 WHERE UPPER(Provider)=@0 AND UPPER(ProviderUserId)=@1", provider, providerUserId, userId);
                     if (insert != 1)
                     {
                         throw new MembershipCreateUserException(MembershipCreateStatus.ProviderError);
@@ -1009,7 +1009,7 @@ namespace PetapocoSimpleMembershipProvider
             using (var db = ConnectToDatabase())
             {
                 // account doesn't exist. create a new one.
-                int insert = db.Execute(@"DELETE FROM [" + OAuthMembershipTableName + "] WHERE UPPER(Provider)=@0 AND UPPER(ProviderUserId)=@1", provider, providerUserId);
+                int insert = db.Execute(@"DELETE FROM " + OAuthMembershipTableName + " WHERE UPPER(Provider)=@0 AND UPPER(ProviderUserId)=@1", provider, providerUserId);
                 if (insert != 1)
                 {
                     throw new MembershipCreateUserException(MembershipCreateStatus.ProviderError);
@@ -1021,7 +1021,7 @@ namespace PetapocoSimpleMembershipProvider
         {
             using (var db = ConnectToDatabase())
             {
-                dynamic id = db.QueryValue(@"SELECT UserId FROM [" + OAuthMembershipTableName + "] WHERE UPPER(Provider)=@0 AND UPPER(ProviderUserId)=@1", provider.ToUpperInvariant(), providerUserId.ToUpperInvariant());
+                dynamic id = db.QueryValue(@"SELECT UserId FROM " + OAuthMembershipTableName + " WHERE UPPER(Provider)=@0 AND UPPER(ProviderUserId)=@1", provider.ToUpperInvariant(), providerUserId.ToUpperInvariant());
                 if (id != null)
                 {
                     return (string)id;
@@ -1038,7 +1038,7 @@ namespace PetapocoSimpleMembershipProvider
                 CreateOAuthTokenTableIfNeeded(db);
 
                 // Note that token is case-sensitive
-                dynamic secret = db.QueryValue(@"SELECT Secret FROM [" + OAuthTokenTableName + "] WHERE Token=@0", token);
+                dynamic secret = db.QueryValue(@"SELECT Secret FROM " + OAuthTokenTableName + " WHERE Token=@0", token);
                 return (string)secret;
             }
         }
@@ -1059,7 +1059,7 @@ namespace PetapocoSimpleMembershipProvider
                     CreateOAuthTokenTableIfNeeded(db);
 
                     // the token exists with old secret, update it to new secret
-                    db.Execute(@"UPDATE [" + OAuthTokenTableName + "] SET Secret = @1 WHERE Token = @0", requestToken, requestTokenSecret);
+                    db.Execute(@"UPDATE " + OAuthTokenTableName + " SET Secret = @1 WHERE Token = @0", requestToken, requestTokenSecret);
                 }
             }
             else
@@ -1069,7 +1069,7 @@ namespace PetapocoSimpleMembershipProvider
                     CreateOAuthTokenTableIfNeeded(db);
 
                     // insert new record
-                    int insert = db.Execute(@"INSERT INTO [" + OAuthTokenTableName + "] (Token, Secret) VALUES(@0, @1)", requestToken, requestTokenSecret);
+                    int insert = db.Execute(@"INSERT INTO " + OAuthTokenTableName + " (Token, Secret) VALUES(@0, @1)", requestToken, requestTokenSecret);
                     if (insert != 1)
                     {
                         throw new ProviderException(WebDataResources.SimpleMembership_FailToStoreOAuthToken);
@@ -1091,7 +1091,7 @@ namespace PetapocoSimpleMembershipProvider
                 CreateOAuthTokenTableIfNeeded(db);
 
                 // insert new record
-                db.Execute(@"DELETE FROM [" + OAuthTokenTableName + "] WHERE Token = @0", requestToken);
+                db.Execute(@"DELETE FROM " + OAuthTokenTableName + " WHERE Token = @0", requestToken);
 
                 // Although there are two different types of tokens, request token and access token,
                 // we treat them the same in database records.
@@ -1110,7 +1110,7 @@ namespace PetapocoSimpleMembershipProvider
                 CreateOAuthTokenTableIfNeeded(db);
 
                 // Note that token is case-sensitive
-                db.Execute(@"DELETE FROM [" + OAuthTokenTableName + "] WHERE Token=@0", token);
+                db.Execute(@"DELETE FROM " + OAuthTokenTableName + " WHERE Token=@0", token);
             }
         }
 
@@ -1121,13 +1121,13 @@ namespace PetapocoSimpleMembershipProvider
             {
                 using (var db = ConnectToDatabase())
                 {
-                    IEnumerable<dynamic> records = db.Query(@"SELECT Provider, ProviderUserId FROM [" + OAuthMembershipTableName + "] WHERE UserId=@0", userId);
+                    IEnumerable<dynamic> records = db.Query(@"SELECT Provider, ProviderUserId FROM " + OAuthMembershipTableName + " WHERE UserId=@0", userId);
                     if (records != null)
                     {
                         var accounts = new List<OAuthAccountData>();
                         foreach (dynamic row in records)
                         {
-                            accounts.Add(new OAuthAccountData((string)row.Provider, (string)row.ProviderUserId));
+                            accounts.Add(new OAuthAccountData((string)row.PROVIDER, (string)row.PROVIDERUSERID));
                         }
                         return accounts;
                     }
@@ -1148,7 +1148,7 @@ namespace PetapocoSimpleMembershipProvider
         {
             using (var db = ConnectToDatabase())
             {
-                dynamic id = db.QueryValue(@"SELECT UserId FROM [" + MembershipTableName + "] WHERE UserId=@0", userId);
+                dynamic id = db.QueryValue(@"SELECT UserId FROM " + MembershipTableName + " WHERE UserId=@0", userId);
                 return id != null;
             }           
         }

@@ -71,17 +71,17 @@ namespace PetapocoSimpleMembershipProvider
 
         private string SafeUserTableName
         {
-            get { return "[" + UserTableName + "]"; }
+            get { return UserTableName; }
         }
 
         private string SafeUserNameColumn
         {
-            get { return "[" + UserNameColumn + "]"; }
+            get { return UserNameColumn; }
         }
 
         private string SafeUserIdColumn
         {
-            get { return "[" + UserIdColumn + "]"; }
+            get { return UserIdColumn; }
         }
 
         internal static string RoleTableName
@@ -199,7 +199,7 @@ namespace PetapocoSimpleMembershipProvider
                         }
 
                         // REVIEW: is there a way to batch up these inserts?
-                        int rows = db.Execute("INSERT INTO " + UsersInRoleTableName + " VALUES (@0, @1);",userIds[uId], roleIds[rId]);
+                        int rows = db.Execute("INSERT INTO " + UsersInRoleTableName + " VALUES (@0, @1)",userIds[uId], roleIds[rId]);
                         if (rows != 1)
                         {
                             throw new ProviderException(WebDataResources.Security_DbFailure);
@@ -281,7 +281,7 @@ namespace PetapocoSimpleMembershipProvider
         {
             using (var db = ConnectToDatabase())
             {
-                return db.Query(@"SELECT RoleName FROM " + RoleTableName).Select<dynamic, string>(d => (string)d.RoleName).ToArray();
+                return db.Query(@"SELECT RoleName FROM " + RoleTableName).Select<dynamic, string>(d => (string)d.ROLENAME).ToArray();
             }
         }
 
@@ -297,7 +297,7 @@ namespace PetapocoSimpleMembershipProvider
                 }
 
                 string query = @"SELECT r.RoleName FROM " + UsersInRoleTableName + " u, " + RoleTableName + " r Where (u.UserId = @0 and u.RoleId = r.RoleId) GROUP BY RoleName";
-                return db.Query(query, new object[] { userId }).Select<dynamic, string>(d => (string)d.RoleName).ToArray();
+                return db.Query(query, new object[] { userId }).Select<dynamic, string>(d => (string)d.ROLENAME).ToArray();
             }
         }
 
@@ -307,7 +307,7 @@ namespace PetapocoSimpleMembershipProvider
             using (var db = ConnectToDatabase())
             {
                 string query = @"SELECT u." + SafeUserNameColumn + " FROM " + SafeUserTableName + " u, " + UsersInRoleTableName + " ur, " + RoleTableName + " r Where (r.RoleName = @0 and ur.RoleId = r.RoleId and ur.UserId = u." + SafeUserIdColumn + ")";
-                return db.Query(query, new object[] { roleName }).Select<dynamic, string>(d => (string)d.UserName).ToArray();
+                return db.Query(query, new object[] { roleName }).Select<dynamic, string>(d => (string)d.USERNAME).ToArray();
             }
         }
 
@@ -317,7 +317,7 @@ namespace PetapocoSimpleMembershipProvider
             using (var db = ConnectToDatabase())
             {
                 var count = db.QuerySingle("SELECT COUNT(*) as cnt FROM " + SafeUserTableName + " u, " + UsersInRoleTableName + " ur, " + RoleTableName + " r Where (u." + SafeUserNameColumn + " = @0 and r.RoleName = @1 and ur.RoleId = r.RoleId and ur.UserId = u." + SafeUserIdColumn + ")", username, roleName);
-                return (count.cnt == 1);
+                return (count.CNT == 1);
             }
         }
 
@@ -370,7 +370,7 @@ namespace PetapocoSimpleMembershipProvider
             {
                 return null;
             }
-            return (string)result.RoleId;
+            return (string)result.ROLEID;
         }
 
         // Inherited from RoleProvider ==> Forwarded to previous provider if this provider hasn't been initialized
