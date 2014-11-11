@@ -15,8 +15,8 @@ namespace SearchKeyWord
         static void Main(string[] args)
         {
             //SearchKeyWord s = new SearchKeyWord(@"K:\Documents and Settings\zhangy\My Documents\Downloads\经典Oracle教程.doc", "的");
-            
-            SearchKeyWord s = new SearchKeyWord(@"F:\项目开发\延长法务\二期SVN\temp\陕西延长石油投资有限公司章程（修改版） - 副本.doc", "的");
+
+            SearchKeyWord s = new SearchKeyWord(@"E:\My Work folder\開発\IRS\SVN\BI\BI-tools\成果物\Excel\Excel接続検証_ホワイトペーパー.docx", "の");
             Console.ReadKey();
         }
     }
@@ -100,11 +100,11 @@ namespace SearchKeyWord
                 MSWord.Range range= doc.Content;
                 string text = range.Text;
 
-                int cnt = range.ComputeStatistics(MSWord.WdStatistic.wdStatisticCharacters);
-                int pages = range.ComputeStatistics(MSWord.WdStatistic.wdStatisticPages);
-                int words = range.ComputeStatistics(MSWord.WdStatistic.wdStatisticWords);
-                int lines = range.ComputeStatistics(MSWord.WdStatistic.wdStatisticLines);
-                int paras = range.ComputeStatistics(MSWord.WdStatistic.wdStatisticParagraphs);
+                int cnt = doc.ComputeStatistics(MSWord.WdStatistic.wdStatisticCharacters);
+                int pages = doc.ComputeStatistics(MSWord.WdStatistic.wdStatisticPages);
+                int words = doc.ComputeStatistics(MSWord.WdStatistic.wdStatisticWords);
+                int lines = doc.ComputeStatistics(MSWord.WdStatistic.wdStatisticLines);
+                int paras = doc.ComputeStatistics(MSWord.WdStatistic.wdStatisticParagraphs);
 
 
                 Console.WriteLine("页数:{0},字数:{1},段落数:{2},行数:{3}", pages, words,paras,lines);
