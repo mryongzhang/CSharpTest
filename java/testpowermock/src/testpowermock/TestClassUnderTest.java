@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.PowerMockUtils;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -54,5 +55,26 @@ public class TestClassUnderTest {
         ClassMyTest myTest = new ClassMyTest("haha");
         myTest.test();        
     }
+    
+    @Test
+    @PrepareForTest(ClassMyTest.class)
+    public void testcall() throws Exception {
+    	
+    	File file = PowerMockito.mock(File.class);
+    	PowerMockito.whenNew(File.class).withAnyArguments().thenReturn(file);
+    	
+        ClassUnderTest underTest = PowerMockito.mock(ClassUnderTest.class);
+        PowerMockito.whenNew(ClassUnderTest.class).withAnyArguments().thenReturn(underTest);
+        PowerMockito.when(underTest.foo()).thenReturn(true);
+        
+        ClassMyTest myTest = new ClassMyTest("haha"){
+        	@Override
+        	   public String strTest() {
+        	      return "now now now";
+        	   }
+        };
+        myTest.test();    
+    }
+    
 
 }

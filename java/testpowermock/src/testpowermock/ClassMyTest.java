@@ -15,6 +15,11 @@ public	class ClassMyTest {
 	
 	}
 	
+	public String strTest()
+	{
+		return "strTest";
+	}
+	
 	public boolean test()
 	{
 		System.out.println("hahaha");
@@ -26,6 +31,8 @@ public	class ClassMyTest {
 		}
 		
 		System.out.println(f.getStr());
+	
+		System.out.println(strTest());
 		return true;
 	}
 }
