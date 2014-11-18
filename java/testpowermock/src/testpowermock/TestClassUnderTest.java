@@ -12,7 +12,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class) 
 public class TestClassUnderTest {
-
+/*
     @Test 
     @PrepareForTest(ClassUnderTest.class) 
     public void testCallInternalInstance() throws Exception { 
@@ -76,5 +76,25 @@ public class TestClassUnderTest {
         myTest.test();    
     }
     
+    @Test
+    @PrepareForTest(FatherClass.class) 
+    public void testcallrealmethod() throws Exception{
+    	FatherClass f = PowerMockito.mock(FatherClass.class);
+    	PowerMockito.doCallRealMethod().when(f).f();
+
+    	PowerMockito.doThrow(new Exception("new exception")).when(f).call("ddfd");
+    	f.f();
+    }
+    */
+    @Test
+    @PrepareForTest(ClassUnderTest.class)
+    public void testCallPrivateMethod() throws Exception { 
+    	ClassUnderTest underTest = PowerMockito.mock(ClassUnderTest.class);
+    	PowerMockito.when(underTest.callPrivateMethod()).thenCallRealMethod();
+    	//PowerMockito.when(underTest,"isExist").thenCallRealMethod();
+    	//PowerMockito.when(underTest,"isExist").thenReturn(true);
+    	PowerMockito.when(underTest,"isExist").thenThrow(new Exception("exception!"));
+    	underTest.callPrivateMethod();    	
+    }
 
 }
